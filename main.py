@@ -4,7 +4,7 @@ class Pedido:
         self.producto = producto
         self.cantidad = cantidad
         self.prioridad = prioridad.upper()
-        self.pago = pago  # se asocia el pago al pedido
+        self.pago = pago
 
     def __str__(self):
         pago_info = f"{self.pago.metodo}:{self.pago.detalle}" if self.pago else "Sin pago"
