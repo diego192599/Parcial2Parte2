@@ -9,48 +9,33 @@ class Pedido:
         return f"{self.nombre_cliente};{self.producto};{self.cantidad};{self.prioridad}"
 
 
-class GestionPedidos:
+class GestorPedidos:
+    def __init__(self, archivo="pedidos.log"):
+        self.archivo = archivo
+
+    def guardar(self, pedido):
+        with open(self.archivo, "a", encoding="utf-8") as f:
+            f.write(str(pedido) + "\n")
+
+
+class Notificador:
+    def notificar(self, pedido):
+        if pedido.prioridad.upper() == "URGENTE":
+            print(f"Pedido URGENTE de {pedido.nombre_cliente}: {pedido.producto} x{pedido.cantidad}")
+
+
+class SistemaCafeteria:
     def __init__(self):
-        self.clientes = {}
-        self.cargar_clientes()
+        self.gestor = GestorPedidos()
+        self.notificador = Notificador()
 
-    def cargar_clientes(self):
-        try:
-            with open("pedidos.log", "r", encoding="utf-8") as archivo:
-                for linea in archivo:
-                    linea = linea.strip()
-                    if linea:
-                        nombre, producto, cantidad, prioridad = linea.split(";")
-                        self.clientes[nombre] = Pedido(
-                            producto=producto,
-                            cantidad=cantidad,
-                            prioridad=prioridad
-                        )
-            print("Cliente Guardado")
-        except FileNotFoundError:
-            print("No existe el archivo pedidos.log se creará uno nuevo al guardar.")
-        except ValueError:
-            print("Error al leer el archivo. Verifique el formato de las líneas.")
+    def registrar_pedido(self):
+        nombre = input("Nombre del cliente: ")
+        producto = input("Producto: ")
+        cantidad = int(input("Cantidad: "))
+        prioridad = input("Prioridad (NORMAL/URGENTE): ").upper()
 
-    def guardar_clientes(self):
-        with open("pedidos.log", "w", encoding="utf-8") as archivo:
-            for nombre, dato in self.clientes.items():
-                archivo.write(f"{nombre}, {dato.producto}, {dato.cantidad}, {dato.prioridad}")
-
-    def agregar_clientes(self):
-        contador = 0
-        while True:
-            contador += 1
-            print("----\n Agregar clientes----")
-            nombre = input("Ingrese el nombre del cliente: ")
-            producto = input("Ingrese el nombre del producto del clinete: ")
-            cantidad = int(input("Ingrese la cantidad de producto que lleva el clinete: "))
-            prioridad = int(input("Seleccione una opcion de la cual es el cliente si es (Urgente=1 o Normal=2): "))
-            if prioridad == 1:
-                print("El producto del cliente es urgente se le colocara mayor prioridad a este pedido ")
-
-            elif prioridad == 2:
-                print("El producto del clinete es normal")
-
-            else:
-                print("Error no esa opcion no se encuentra disponible")
+        pedido = Pedido(nombre, producto, cantidad, prioridad)
+        self.gestor.guardar(pedido)
+        self.notificador.notificar(pedido)
+        print("Pedido registrado.")
