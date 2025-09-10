@@ -64,18 +64,27 @@ class SistemaCafeteria:
                 print(p.strip())
 
 class Pago:
-    def __init__(self,pago):
-        self.pago=pago
+    def __init__(self):
+        self.metodo = None
+        self.detalle = None
 
-    def agregar_Pago(self):
-        print("Agregue el metodo de pago ")
-        opcion_pago=input("Ingrese si paga con tarjeta o efectivo: ")
-        if opcion_pago=="Tarjeta":
-            print("El pago que usted realizara es con tarjeta")
-            pago_tarjeta=input("Ingrese los primeros numero de la tarjeta: ")
-        elif opcion_pago=="Efectivo":
-            print("EL pago que usted realiza es con efectivo: ")
-            pago_efectivo=float(input("Ingrese la cantidad a pagar: "))
+    def agregar_pago(self):
+        print("\n Métodos de pago disponibles: Tarjeta | Efectivo")
+        opcion_pago = input("Ingrese método de pago: ").strip().lower()
+
+        if opcion_pago == "tarjeta":
+            self.metodo = "Tarjeta"
+            self.detalle = input("Ingrese los primeros 4 dígitos de la tarjeta: ")
+        elif opcion_pago == "efectivo":
+            self.metodo = "Efectivo"
+            self.detalle = float(input("Ingrese la cantidad a pagar: "))
+        else:
+            print("Método de pago no válido, se registrará como 'Desconocido'")
+            self.metodo = "Desconocido"
+            self.detalle = ""
+
+        return self
+
 
 class Menu:
     def __init__(self):
