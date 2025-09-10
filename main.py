@@ -1,12 +1,14 @@
 class Pedido:
-    def __init__(self, nombre_cliente, producto, cantidad, prioridad):
+    def __init__(self, nombre_cliente, producto, cantidad, prioridad, pago=None):
         self.nombre_cliente = nombre_cliente
         self.producto = producto
         self.cantidad = cantidad
         self.prioridad = prioridad.upper()
+        self.pago = pago  # se asocia el pago al pedido
 
     def __str__(self):
-        return f"{self.nombre_cliente};{self.producto};{self.cantidad};{self.prioridad}"
+        pago_info = f"{self.pago.metodo}:{self.pago.detalle}" if self.pago else "Sin pago"
+        return f"{self.nombre_cliente};{self.producto};{self.cantidad};{self.prioridad};{pago_info}"
 
 
 class GestorPedidos:
@@ -34,34 +36,8 @@ class Notificador:
 class NotificadorConsola(Notificador):
     def notificar(self, pedido: Pedido):
         if pedido.prioridad == "URGENTE":
-            print(f" Pedido URGENTE de {pedido.nombre_cliente}: {pedido.producto} x{pedido.cantidad}")
+            print(f"Pedido URGENTE de {pedido.nombre_cliente}: {pedido.producto} x{pedido.cantidad}")
 
-
-class SistemaCafeteria:
-    def __init__(self):
-        self.gestor = GestorPedidos()
-        self.notificadores = [NotificadorConsola()]
-
-    def registrar_pedido(self):
-        nombre = input("Nombre del cliente: ")
-        producto = input("Producto: ")
-        cantidad = int(input("Cantidad: "))
-        prioridad = input("Prioridad (NORMAL/URGENTE): ")
-        pedido = Pedido(nombre, producto, cantidad, prioridad)
-        self.gestor.guardar(pedido)
-        for notificador in self.notificadores:
-            notificador.notificar(pedido)
-
-        print("Pedido registrado.")
-
-    def mostrar_pedidos(self):
-        print("\n Lista de pedidos registrados:")
-        pedidos = self.gestor.cargar()
-        if not pedidos:
-            print("No hay pedidos registrados.")
-        else:
-            for p in pedidos:
-                print(p.strip())
 
 class Pago:
     def __init__(self):
@@ -79,11 +55,41 @@ class Pago:
             self.metodo = "Efectivo"
             self.detalle = float(input("Ingrese la cantidad a pagar: "))
         else:
-            print("Método de pago no válido, se registrará como 'Desconocido'")
+            print(" Método de pago no válido, se registrará como 'Desconocido'")
             self.metodo = "Desconocido"
             self.detalle = ""
 
         return self
+
+
+class SistemaCafeteria:
+    def __init__(self):
+        self.gestor = GestorPedidos()
+        self.notificadores = [NotificadorConsola()]
+
+    def registrar_pedido(self):
+        nombre = input("Nombre del cliente: ")
+        producto = input("Producto: ")
+        cantidad = int(input("Cantidad: "))
+        prioridad = input("Prioridad (NORMAL/URGENTE): ")
+        pago = Pago().agregar_pago()
+
+        pedido = Pedido(nombre, producto, cantidad, prioridad, pago)
+
+        self.gestor.guardar(pedido)
+        for notificador in self.notificadores:
+            notificador.notificar(pedido)
+
+        print(f" Pedido registrado con pago: {pago.metodo} ({pago.detalle})")
+
+    def mostrar_pedidos(self):
+        print("\n Lista de pedidos registrados:")
+        pedidos = self.gestor.cargar()
+        if not pedidos:
+            print("No hay pedidos registrados.")
+        else:
+            for p in pedidos:
+                print(p.strip())
 
 
 class Menu:
@@ -104,10 +110,10 @@ class Menu:
             elif opcion == "2":
                 self.sistema.mostrar_pedidos()
             elif opcion == "3":
-                print("Saliendo del sistema...")
+                print(" Saliendo del sistema...")
                 break
             else:
-                print(" Opción no válida, intente de nuevo.")
+                print("Opción no válida, intente de nuevo.")
 
 
 if __name__ == "__main__":
