@@ -33,7 +33,7 @@ class Notificador:
         pass
 
 
-class NotificadorConsola(Notificador):
+class Notificadores(Notificador):
     def notificar(self, pedido: Pedido):
         if pedido.prioridad == "URGENTE":
             print(f"Pedido URGENTE de {pedido.nombre_cliente}: {pedido.producto} x{pedido.cantidad}")
@@ -65,7 +65,7 @@ class Pago:
 class SistemaCafeteria:
     def __init__(self):
         self.gestor = GestorPedidos()
-        self.notificadores = [NotificadorConsola()]
+        self.notificadores = [Notificadores()]
 
     def registrar_pedido(self):
         nombre = input("Nombre del cliente: ")
