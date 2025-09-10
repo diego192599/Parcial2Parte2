@@ -1,9 +1,9 @@
 class Pedido:
-    def __init__(self, nombre_cliente, producto, cantidad, precio,prioridad, pago=None):
+    def __init__(self, nombre_cliente, producto, cantidad, precio, prioridad, pago=None):
         self.nombre_cliente = nombre_cliente
         self.producto = producto
         self.cantidad = cantidad
-        self.precio=precio
+        self.precio = precio
         self.prioridad = prioridad.upper()
         self.pago = pago
 
@@ -72,15 +72,16 @@ class SistemaCafeteria:
         nombre = input("Nombre del cliente: ")
         producto = input("Producto: ")
         cantidad = int(input("Cantidad: "))
-        precio=float(input("Precio a pagar: "))
+        precio = float(input("Precio a pagar: "))
         prioridad = input("Prioridad (NORMAL/URGENTE): ")
         pago = Pago().agregar_pago()
 
-        pedido = Pedido(nombre, producto, cantidad, precio,prioridad, pago)
+        pedido = Pedido(nombre, producto, cantidad, precio, prioridad, pago)
 
         self.gestor.guardar(pedido)
         for notificador in self.notificadores:
             notificador.notificar(pedido)
+
         print(f" Pedido registrado con pago: {pago.metodo} ({pago.detalle})")
 
     def mostrar_pedidos(self):
